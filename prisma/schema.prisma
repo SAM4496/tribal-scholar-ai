@@ -1,0 +1,491 @@
+// Prisma Schema for Tribal Scholar AI
+// AI-enabled Scholarship and Fellowship Management System
+// HACKATHON PROTOTYPE — Demo schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============ ENUMS ============
+
+enum UserRole {
+  APPLICANT
+  SCRUTINY_OFFICER
+  SELECTION_OFFICER
+  ADMIN
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum ApplicationStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_DOCUMENT_VERIFICATION
+  UNDER_ELIGIBILITY_CHECK
+  ELIGIBLE
+  INELIGIBLE
+  DEFICIENT
+  UNDER_SCRUTINY
+  SCRUTINY_COMPLETE
+  UNDER_SCREENING
+  SELECTED
+  REJECTED
+  APPROVED
+  WITHDRAWN
+}
+
+enum DocumentStatus {
+  UPLOADED
+  PROCESSING
+  VERIFIED
+  FAILED
+  NEEDS_REVIEW
+  REJECTED
+}
+
+enum VerificationStatus {
+  PASS
+  FAIL
+  NEEDS_REVIEW
+}
+
+enum VerificationType {
+  AI
+  MANUAL
+}
+
+enum OcrStatus {
+  PENDING
+  PROCESSING
+  SUCCESS
+  FAILED
+}
+
+enum DeficiencyStatus {
+  OPEN
+  RESPONDED
+  RESOLVED
+  REJECTED
+}
+
+enum NotificationType {
+  STATUS_UPDATE
+  DEFICIENCY
+  APPROVAL
+  GENERAL
+}
+
+enum RuleType {
+  AGE
+  INCOME
+  EDUCATION
+  CATEGORY
+  DOCUMENT
+  CUSTOM
+}
+
+enum FieldType {
+  TEXT
+  NUMBER
+  DATE
+  SELECT
+  FILE
+  TEXTAREA
+}
+
+// ============ MODELS ============
+
+/// User accounts for all roles
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         UserRole @default(APPLICANT)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  applicantProfile       ApplicantProfile?
+  uploadedDocuments      Document[]               @relation("UploadedBy")
+  documentVerifications  DocumentVerification[]    @relation("VerifiedBy")
+  createdDeficiencies    Deficiency[]              @relation("CreatedBy")
+  resolvedDeficiencies   Deficiency[]              @relation("ResolvedBy")
+  notifications          Notification[]
+  statusChanges          ApplicationStatusHistory[] @relation("ChangedBy")
+  lastUpdatedApplications Application[]            @relation("LastUpdatedBy")
+  selectionScores        SelectionScore[]          @relation("ScoredBy")
+  auditLogs              AuditLog[]
+
+  @@index([email])
+  @@index([role])
+}
+
+/// Extended profile for applicants
+model ApplicantProfile {
+  id                   String   @id @default(uuid())
+  userId               String   @unique
+  dateOfBirth          DateTime?
+  gender               Gender?
+  phone                String?
+  aadhaarLast4         String?
+  category             String?  @default("ST")
+  tribe                String?
+  fatherName           String?
+  motherName           String?
+  address              String?
+  district             String?
+  state                String?
+  pincode              String?
+  stCertificateNumber  String?
+  annualFamilyIncome   Decimal?
+  bankAccountNumber    String?
+  bankName             String?
+  ifscCode             String?
+  currentEducationLevel String?
+  institution          String?
+  course               String?
+  profileComplete      Boolean  @default(false)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  // Relations
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  applications Application[]
+
+  @@index([userId])
+}
+
+/// Scholarship/fellowship scheme
+model Scheme {
+  id                   String    @id @default(uuid())
+  code                 String    @unique
+  name                 String
+  description          String
+  isActive             Boolean   @default(true)
+  applicationStartDate DateTime?
+  applicationEndDate   DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  // Relations
+  versions     SchemeVersion[]
+  applications Application[]
+
+  @@index([code])
+}
+
+/// Versioned configuration for a scheme
+model SchemeVersion {
+  id        String   @id @default(uuid())
+  schemeId  String
+  version   Int      @default(1)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  // Relations
+  scheme            Scheme             @relation(fields: [schemeId], references: [id], onDelete: Cascade)
+  eligibilityRules  EligibilityRule[]
+  requiredDocuments RequiredDocument[]
+  schemeFields      SchemeField[]
+  applications      Application[]
+
+  @@unique([schemeId, version])
+  @@index([schemeId])
+}
+
+/// Configurable eligibility rules for a scheme
+model EligibilityRule {
+  id              String   @id @default(uuid())
+  schemeVersionId String
+  ruleCode        String
+  ruleName        String
+  ruleDescription String
+  ruleType        RuleType
+  ruleConfig      Json     @default("{}")
+  isMandatory     Boolean  @default(true)
+  orderIndex      Int      @default(0)
+  createdAt       DateTime @default(now())
+
+  // Relations
+  schemeVersion     SchemeVersion     @relation(fields: [schemeVersionId], references: [id], onDelete: Cascade)
+  eligibilityResults EligibilityResult[]
+
+  @@index([schemeVersionId])
+}
+
+/// Documents required for a scheme
+model RequiredDocument {
+  id              String   @id @default(uuid())
+  schemeVersionId String
+  documentType    String
+  documentName    String
+  description     String?
+  isMandatory     Boolean  @default(true)
+  maxSizeMB       Int      @default(5)
+  allowedFormats  String[] @default(["pdf", "jpg", "png"])
+  orderIndex      Int      @default(0)
+  createdAt       DateTime @default(now())
+
+  // Relations
+  schemeVersion SchemeVersion @relation(fields: [schemeVersionId], references: [id], onDelete: Cascade)
+
+  @@index([schemeVersionId])
+}
+
+/// Custom form fields for a scheme
+model SchemeField {
+  id              String    @id @default(uuid())
+  schemeVersionId String
+  fieldCode       String
+  fieldLabel      String
+  fieldType       FieldType
+  isRequired      Boolean   @default(false)
+  options         Json?
+  validationRules Json?
+  section         String    @default("General")
+  orderIndex      Int       @default(0)
+  createdAt       DateTime  @default(now())
+
+  // Relations
+  schemeVersion     SchemeVersion    @relation(fields: [schemeVersionId], references: [id], onDelete: Cascade)
+  applicationFields ApplicationField[]
+
+  @@index([schemeVersionId])
+}
+
+/// An applicant's application to a scheme
+model Application {
+  id                String            @id @default(uuid())
+  applicationNumber String            @unique
+  applicantId       String
+  schemeId          String
+  schemeVersionId   String
+  status            ApplicationStatus @default(DRAFT)
+  currentStage      String            @default("Application Form")
+  submittedAt       DateTime?
+  lastUpdatedById   String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  // Relations
+  applicant         ApplicantProfile          @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  scheme            Scheme                    @relation(fields: [schemeId], references: [id])
+  schemeVersion     SchemeVersion             @relation(fields: [schemeVersionId], references: [id])
+  lastUpdatedBy     User?                     @relation("LastUpdatedBy", fields: [lastUpdatedById], references: [id])
+  fields            ApplicationField[]
+  documents         Document[]
+  eligibilityResults EligibilityResult[]
+  deficiencies      Deficiency[]
+  statusHistory     ApplicationStatusHistory[]
+  selectionScores   SelectionScore[]
+  notifications     Notification[]
+
+  @@index([applicantId])
+  @@index([schemeId])
+  @@index([status])
+  @@index([applicationNumber])
+}
+
+/// Applicant's answers to scheme-specific form fields
+model ApplicationField {
+  id            String @id @default(uuid())
+  applicationId String
+  schemeFieldId String
+  fieldValue    String @default("")
+
+  // Relations
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  schemeField SchemeField  @relation(fields: [schemeFieldId], references: [id])
+
+  @@unique([applicationId, schemeFieldId])
+  @@index([applicationId])
+}
+
+/// Uploaded document for an application
+model Document {
+  id            String         @id @default(uuid())
+  applicationId String
+  documentType  String
+  fileName      String
+  filePath      String
+  fileSize      Int
+  mimeType      String
+  status        DocumentStatus @default(UPLOADED)
+  uploadedAt    DateTime       @default(now())
+  uploadedById  String
+
+  // Relations
+  application   Application           @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  uploadedBy    User                  @relation("UploadedBy", fields: [uploadedById], references: [id])
+  verifications DocumentVerification[]
+  ocrResults    OcrResult[]
+  deficiencies  Deficiency[]          @relation("DeficientDocument")
+  responseDocuments Deficiency[]      @relation("ResponseDocument")
+
+  @@index([applicationId])
+  @@index([documentType])
+}
+
+/// AI or manual verification result for a document
+model DocumentVerification {
+  id                  String             @id @default(uuid())
+  documentId          String
+  verificationType    VerificationType
+  verificationStatus  VerificationStatus
+  confidenceScore     Decimal?
+  verificationDetails Json               @default("{}")
+  verifiedById        String?
+  verifiedAt          DateTime           @default(now())
+  remarks             String?
+
+  // Relations
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  verifiedBy User?    @relation("VerifiedBy", fields: [verifiedById], references: [id])
+
+  @@index([documentId])
+}
+
+/// OCR extraction results for a document
+model OcrResult {
+  id              String    @id @default(uuid())
+  documentId      String
+  ocrStatus       OcrStatus @default(PENDING)
+  rawText         String?
+  extractedFields Json      @default("{}")
+  confidence      Decimal?
+  processedAt     DateTime?
+
+  // Relations
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+}
+
+/// Result of an eligibility rule evaluation for an application
+model EligibilityResult {
+  id            String             @id @default(uuid())
+  applicationId String
+  ruleId        String
+  result        VerificationStatus
+  details       String?
+  evaluatedAt   DateTime           @default(now())
+
+  // Relations
+  application Application    @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  rule        EligibilityRule @relation(fields: [ruleId], references: [id])
+
+  @@unique([applicationId, ruleId])
+  @@index([applicationId])
+}
+
+/// Deficiency flagged by an officer
+model Deficiency {
+  id                 String           @id @default(uuid())
+  applicationId      String
+  documentId         String?
+  description        String
+  status             DeficiencyStatus @default(OPEN)
+  createdById        String
+  createdAt          DateTime         @default(now())
+  responseText       String?
+  responseDocumentId String?
+  respondedAt        DateTime?
+  resolvedById       String?
+  resolvedAt         DateTime?
+
+  // Relations
+  application      Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  document         Document?   @relation("DeficientDocument", fields: [documentId], references: [id])
+  createdBy        User        @relation("CreatedBy", fields: [createdById], references: [id])
+  responseDocument Document?   @relation("ResponseDocument", fields: [responseDocumentId], references: [id])
+  resolvedBy       User?       @relation("ResolvedBy", fields: [resolvedById], references: [id])
+
+  @@index([applicationId])
+  @@index([status])
+}
+
+/// Notification sent to a user
+model Notification {
+  id            String           @id @default(uuid())
+  userId        String
+  applicationId String?
+  title         String
+  message       String
+  type          NotificationType @default(GENERAL)
+  isRead        Boolean          @default(false)
+  createdAt     DateTime         @default(now())
+
+  // Relations
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  application Application? @relation(fields: [applicationId], references: [id])
+
+  @@index([userId])
+  @@index([userId, isRead])
+}
+
+/// Tracks every status change for audit/timeline
+model ApplicationStatusHistory {
+  id            String   @id @default(uuid())
+  applicationId String
+  fromStatus    String?
+  toStatus      String
+  changedById   String
+  remarks       String?
+  changedAt     DateTime @default(now())
+
+  // Relations
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  changedBy   User        @relation("ChangedBy", fields: [changedById], references: [id])
+
+  @@index([applicationId])
+}
+
+/// Transparent scoring for selection
+model SelectionScore {
+  id            String   @id @default(uuid())
+  applicationId String
+  criteriaName  String
+  score         Decimal
+  maxScore      Decimal
+  remarks       String?
+  scoredById    String
+  scoredAt      DateTime @default(now())
+
+  // Relations
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  scoredBy    User        @relation("ScoredBy", fields: [scoredById], references: [id])
+
+  @@unique([applicationId, criteriaName])
+  @@index([applicationId])
+}
+
+/// Immutable audit log of all important actions
+model AuditLog {
+  id            String   @id @default(uuid())
+  userId        String
+  action        String
+  entity        String
+  entityId      String?
+  previousValue Json?
+  newValue      Json?
+  ipAddress     String?
+  timestamp     DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([entity, entityId])
+  @@index([timestamp])
+}
