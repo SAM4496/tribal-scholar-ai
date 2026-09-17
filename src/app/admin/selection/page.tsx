@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import ScoringPanel from '@/components/admin/ScoringPanel';
 import MeritList from '@/components/admin/MeritList';
 import SelectionSummary from '@/components/admin/SelectionSummary';
+import PageHeader, { DemoBadge } from '@/components/admin/PageHeader';
 import { buildSelectionEntries, type SelectionEntry } from '@/lib/mock-selection';
 
 export default function SelectionPage() {
@@ -51,14 +52,15 @@ export default function SelectionPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Selection &amp; Merit List</h1>
-        <p className="text-gray-500 mt-1">Score applications and manage the selection process</p>
-      </div>
+      <PageHeader
+        title="Selection &amp; Merit List"
+        description="Score applications and manage the selection process"
+        actions={<DemoBadge />}
+      />
 
       <SelectionSummary entries={entries} />
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+      <div className="mt-6 space-y-6">
         <ScoringPanel
           entries={entries}
           activeId={resolvedActiveId}

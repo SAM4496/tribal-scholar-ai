@@ -169,7 +169,7 @@ export default function ApplicationDetail({ detail }: ApplicationDetailProps) {
       {openDeficiencies.length > 0 && (
         <div className="mt-4 rounded-xl border border-orange-200 bg-orange-50 p-4">
           <h2 className="text-sm font-semibold text-orange-800">
-            {openDeficiencies.length} open deficiency{openDeficiencies.length > 1 ? 'ies' : ''}
+            {openDeficiencies.length} open {openDeficiencies.length > 1 ? 'deficiencies' : 'deficiency'}
           </h2>
           {openDeficiencies.map((deficiency) => (
             <p key={deficiency.id} className="text-sm text-orange-700 mt-1">

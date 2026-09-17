@@ -54,44 +54,46 @@ export default function ScoringPanel({
         </select>
       </div>
 
-      <div className="p-5 space-y-4">
-        {criteria.map((criterion) => {
-          const score = active.scores[criterion.name] ?? 0;
-          return (
-            <div key={criterion.name} className="border border-gray-100 rounded-lg p-3">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-sm font-medium text-gray-900">{criterion.name}</p>
-                  <p className="text-xs text-gray-400">{criterion.description}</p>
+      <div className="p-5">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          {criteria.map((criterion) => {
+            const score = active.scores[criterion.name] ?? 0;
+            return (
+              <div key={criterion.name} className="rounded-lg border border-gray-100 p-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">{criterion.name}</p>
+                    <p className="text-xs text-gray-400">{criterion.description}</p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-1">
+                    <input
+                      type="number"
+                      min={0}
+                      max={criterion.maxScore}
+                      value={score}
+                      onChange={(e) => {
+                        const raw = Number(e.target.value);
+                        const clamped = Math.max(0, Math.min(criterion.maxScore, Number.isNaN(raw) ? 0 : raw));
+                        onScoreChange(active.application.id, criterion.name, clamped);
+                      }}
+                      className="w-20 rounded-lg border border-gray-300 px-2 py-1.5 text-right text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-gray-400">/ {criterion.maxScore}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1 shrink-0">
-                  <input
-                    type="number"
-                    min={0}
-                    max={criterion.maxScore}
-                    value={score}
-                    onChange={(e) => {
-                      const raw = Number(e.target.value);
-                      const clamped = Math.max(0, Math.min(criterion.maxScore, Number.isNaN(raw) ? 0 : raw));
-                      onScoreChange(active.application.id, criterion.name, clamped);
-                    }}
-                    className="w-20 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-right focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <span className="text-sm text-gray-400">/ {criterion.maxScore}</span>
-                </div>
+                <input
+                  type="text"
+                  value={active.remarks[criterion.name] ?? ''}
+                  onChange={(e) => onRemarksChange(active.application.id, criterion.name, e.target.value)}
+                  placeholder="Remarks (optional)"
+                  className="mt-2 w-full rounded-lg border border-gray-200 px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
               </div>
-              <input
-                type="text"
-                value={active.remarks[criterion.name] ?? ''}
-                onChange={(e) => onRemarksChange(active.application.id, criterion.name, e.target.value)}
-                placeholder="Remarks (optional)"
-                className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs mt-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
 
-        <div className="flex items-center justify-between rounded-lg bg-blue-50 border border-blue-100 px-4 py-3">
+        <div className="mt-4 flex items-center justify-between rounded-lg border border-blue-100 bg-blue-50 px-4 py-3">
           <span className="text-sm font-medium text-blue-800">Total Score</span>
           <span className={cn('text-xl font-bold', total > 0 ? 'text-blue-800' : 'text-gray-400')}>
             {total} <span className="text-sm font-normal">/ {max}</span>

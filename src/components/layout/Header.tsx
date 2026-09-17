@@ -11,6 +11,11 @@ interface HeaderProps {
 
 export default function Header({ userRole, userName }: HeaderProps) {
   const pathname = usePathname();
+  const portalLabel = pathname.startsWith('/admin')
+    ? 'Admin Portal'
+    : pathname.startsWith('/applicant')
+      ? 'Applicant Portal'
+      : null;
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -36,7 +41,7 @@ export default function Header({ userRole, userName }: HeaderProps) {
 
           {/* Navigation */}
           <nav className="flex items-center gap-1 sm:gap-2">
-            {!userRole && (
+            {!userRole && !portalLabel && (
               <>
                 <Link
                   href="/login"
@@ -56,6 +61,13 @@ export default function Header({ userRole, userName }: HeaderProps) {
                   Register
                 </Link>
               </>
+            )}
+
+            {portalLabel && !userRole && (
+              <span className="inline-flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-1.5 text-sm font-medium text-blue-700">
+                <span className="h-2 w-2 rounded-full bg-blue-600" />
+                <span className="hidden sm:inline">{portalLabel} · Demo</span>
+              </span>
             )}
 
             {userRole === 'APPLICANT' && (

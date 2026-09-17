@@ -4,6 +4,7 @@ import { useState } from 'react';
 import DeficiencyList from '@/components/admin/DeficiencyList';
 import CreateDeficiencyForm from '@/components/admin/CreateDeficiencyForm';
 import DeficiencyReviewPanel from '@/components/admin/DeficiencyReviewPanel';
+import PageHeader, { DemoBadge } from '@/components/admin/PageHeader';
 import { MOCK_APPLICATIONS } from '@/lib/mock-data';
 import { MOCK_DEFICIENCIES, type MockDeficiencyRecord } from '@/lib/mock-deficiencies';
 
@@ -62,13 +63,16 @@ export default function DeficienciesPage() {
 
   return (
     <div>
-      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Deficiency Management</h1>
-          <p className="text-gray-500 mt-1">Create and track deficiencies in applications</p>
-        </div>
-        <CreateDeficiencyForm applications={applications} onCreate={handleCreate} />
-      </div>
+      <PageHeader
+        title="Deficiency Management"
+        description="Create and track deficiencies in applications"
+        actions={
+          <>
+            <DemoBadge />
+            <CreateDeficiencyForm applications={applications} onCreate={handleCreate} />
+          </>
+        }
+      />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div className="bg-white border border-gray-200 border-l-4 border-l-orange-500 rounded-xl p-4">
