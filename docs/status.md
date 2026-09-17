@@ -1,6 +1,6 @@
 # Team Project Status
 
-> Updated by Team Leader (SAM4496). Last updated: 2026-09-15
+> Updated by Team Leader (SAM4496). Last updated: 2026-09-17
 
 ## Team Roster
 
@@ -39,14 +39,28 @@
 | 15 | Admin Dashboard | bhoomii2012 | feature/admin | #3, #9 |
 | 16 | Admin Review Page | bhoomii2012 | feature/admin | #9, #12, #13 |
 
+## Admin Panel Progress — bhoomii2012 (`feature/admin`)
+
+> Built against mock data pending backend APIs (see `docs/api.md` for target contracts).
+> All items below pass `tsc --noEmit`, targeted ESLint, and `next build`.
+
+| # | Task | Status | Commit | Notes |
+|---|---|---|---|---|
+| 15 | Admin Dashboard | ✅ Done | `98100c5` | Stats cards, recent applications, status distribution chart (pure CSS/SVG, no chart lib) |
+| 16 | Admin Application Review | ✅ Done | `55630d2` | Application list + filters, detail view, document/AI verification, eligibility results, status-change dialog |
+| 17 | Deficiency Management (admin UI) | ✅ Done | `7e909a8` | Create deficiency, list/filter, review panel with resolve/reject. *Backend API + applicant response (#18) still pending* |
+| 19 | Selection Scoring & Merit List | ✅ Done | `8db5793` | Scheme-wise criteria scoring, auto totals, ranked merit list, bulk select/reject |
+
+Pushed to `origin/feature/admin` (latest `8db5793`).
+
 ## Integration Milestones
 
 - [ ] **Milestone 1:** Auth works end-to-end (register → login → see dashboard)
 - [ ] **Milestone 2:** Applicant can create and submit an application
 - [ ] **Milestone 3:** Documents uploaded and AI-verified
-- [ ] **Milestone 4:** Admin can see and review applications
-- [ ] **Milestone 5:** Deficiency → Response → Resolution flow works
-- [ ] **Milestone 6:** Selection scoring and approval works
+- [ ] **Milestone 4:** Admin can see and review applications *(admin UI done with mock data; awaiting APIs #9/#12/#13)*
+- [ ] **Milestone 5:** Deficiency → Response → Resolution flow works *(admin UI done; awaiting applicant response #18 + API)*
+- [ ] **Milestone 6:** Selection scoring and approval works *(admin UI done with mock data; awaiting API)*
 - [ ] **Milestone 7:** Full demo scenario runs end-to-end
 
 ## Blockers
