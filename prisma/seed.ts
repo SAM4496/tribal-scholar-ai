@@ -2,7 +2,7 @@
 // Creates demo users, schemes, eligibility rules, required documents, and form fields
 // Run with: npx prisma db seed
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, ApplicationStatus } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
@@ -321,7 +321,7 @@ async function main() {
     });
 
     // Create some applications from other applicants in various statuses
-    const statuses: Array<{ status: any; stage: string }> = [
+    const statuses: Array<{ status: ApplicationStatus; stage: string }> = [
       { status: 'SUBMITTED', stage: 'Document Verification' },
       { status: 'ELIGIBLE', stage: 'Scrutiny' },
       { status: 'UNDER_SCRUTINY', stage: 'Scrutiny' },

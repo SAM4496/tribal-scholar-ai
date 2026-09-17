@@ -21,7 +21,7 @@ export default function ScoringPanel({
   const active = entries.find((e) => e.application.id === activeId) ?? entries[0];
   if (!active) {
     return (
-      <div className="bg-white border border-gray-200 rounded-xl p-5 text-sm text-gray-500">
+      <div className="card p-5 text-sm text-slate-500">
         No applications in the screening pool.
       </div>
     );
@@ -32,19 +32,19 @@ export default function ScoringPanel({
   const max = maxTotal(active.application.schemeCode);
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl">
-      <div className="p-5 border-b border-gray-100">
-        <h2 className="text-lg font-semibold text-gray-900">Scoring Panel</h2>
-        <p className="text-sm text-gray-500">Apply the approved scheme criteria transparently</p>
+    <div className="card">
+      <div className="p-5 border-b border-slate-100">
+        <h2 className="section-title">Scoring Panel</h2>
+        <p className="text-sm text-slate-500">Apply the approved scheme criteria transparently</p>
 
-        <label htmlFor="scoring-application" className="block text-sm font-medium text-gray-700 mt-4 mb-1">
+        <label htmlFor="scoring-application" className="block text-sm font-medium text-slate-700 mt-4 mb-1">
           Application
         </label>
         <select
           id="scoring-application"
           value={active.application.id}
           onChange={(e) => onSelect(e.target.value)}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="input"
         >
           {entries.map((entry) => (
             <option key={entry.application.id} value={entry.application.id}>
@@ -59,11 +59,11 @@ export default function ScoringPanel({
           {criteria.map((criterion) => {
             const score = active.scores[criterion.name] ?? 0;
             return (
-              <div key={criterion.name} className="rounded-lg border border-gray-100 p-3">
+              <div key={criterion.name} className="rounded-xl border border-slate-200/80 bg-gradient-to-br from-slate-50/60 to-white p-3.5 transition-colors hover:border-blue-200">
                 <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">{criterion.name}</p>
-                    <p className="text-xs text-gray-400">{criterion.description}</p>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-slate-900">{criterion.name}</p>
+                    <p className="mt-0.5 text-xs text-slate-400">{criterion.description}</p>
                   </div>
                   <div className="flex shrink-0 items-center gap-1">
                     <input
@@ -76,27 +76,33 @@ export default function ScoringPanel({
                         const clamped = Math.max(0, Math.min(criterion.maxScore, Number.isNaN(raw) ? 0 : raw));
                         onScoreChange(active.application.id, criterion.name, clamped);
                       }}
-                      className="w-20 rounded-lg border border-gray-300 px-2 py-1.5 text-right text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="input w-20 text-right font-semibold"
                     />
-                    <span className="text-sm text-gray-400">/ {criterion.maxScore}</span>
+                    <span className="text-sm text-slate-400">/ {criterion.maxScore}</span>
                   </div>
+                </div>
+                <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-slate-100">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 transition-all duration-300"
+                    style={{ width: `${Math.round((score / criterion.maxScore) * 100)}%` }}
+                  />
                 </div>
                 <input
                   type="text"
                   value={active.remarks[criterion.name] ?? ''}
                   onChange={(e) => onRemarksChange(active.application.id, criterion.name, e.target.value)}
                   placeholder="Remarks (optional)"
-                  className="mt-2 w-full rounded-lg border border-gray-200 px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input mt-2.5 text-xs"
                 />
               </div>
             );
           })}
         </div>
 
-        <div className="mt-4 flex items-center justify-between rounded-lg border border-blue-100 bg-blue-50 px-4 py-3">
-          <span className="text-sm font-medium text-blue-800">Total Score</span>
-          <span className={cn('text-xl font-bold', total > 0 ? 'text-blue-800' : 'text-gray-400')}>
-            {total} <span className="text-sm font-normal">/ {max}</span>
+        <div className="mt-4 flex items-center justify-between rounded-xl border border-blue-200/70 bg-gradient-to-r from-blue-50 via-indigo-50 to-white px-4 py-3.5">
+          <span className="eyebrow text-blue-800">Total Score</span>
+          <span className={cn('font-display text-2xl font-bold tabular-nums', total > 0 ? 'text-blue-800' : 'text-slate-400')}>
+            {total} <span className="text-sm font-medium text-slate-400">/ {max}</span>
           </span>
         </div>
       </div>

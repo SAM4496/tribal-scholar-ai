@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { LogoMark } from '@/components/layout/Logo';
 import { cn } from '@/lib/utils';
 
 interface HeaderProps {
@@ -18,45 +19,43 @@ export default function Header({ userRole, userName }: HeaderProps) {
       : null;
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-      {/* Top bar — Indian government style accent */}
-      <div className="bg-gradient-to-r from-orange-600 via-white to-green-600 h-1" />
+    <header className="sticky top-0 z-50 border-b border-slate-200/70 glass shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+      <div className="h-1 bg-gradient-to-r from-orange-500 via-slate-200 to-emerald-600" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo and title */}
-          <Link href="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-900 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">TS</span>
+      <div className="mx-auto max-w-[90rem] px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
+          <Link href="/" className="group flex items-center gap-3">
+            <div className="relative transition-transform duration-300 group-hover:scale-[1.05] group-hover:rotate-[-3deg]">
+              <span className="absolute -inset-1.5 rounded-2xl bg-indigo-500/20 opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-100" />
+              <LogoMark size={40} className="relative" />
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-lg font-semibold text-gray-900 leading-tight">
-                Tribal Scholar AI
+              <h1 className="font-display text-base font-bold leading-tight tracking-tight text-slate-900">
+                Tribal Scholar <span className="text-blue-700">AI</span>
               </h1>
-              <p className="text-xs text-gray-500 leading-tight">
+              <p className="text-[0.7rem] leading-tight tracking-wide text-slate-500">
                 Scholarship Management System
               </p>
             </div>
           </Link>
 
-          {/* Navigation */}
           <nav className="flex items-center gap-1 sm:gap-2">
             {!userRole && !portalLabel && (
               <>
                 <Link
                   href="/login"
                   className={cn(
-                    'px-4 py-2 text-sm font-medium rounded-lg transition-colors',
+                    'rounded-lg px-4 py-2 text-sm font-medium transition-colors',
                     pathname === '/login'
                       ? 'bg-blue-50 text-blue-700'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                   )}
                 >
                   Login
                 </Link>
                 <Link
                   href="/register"
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 transition-colors"
+                  className="rounded-lg bg-gradient-to-r from-blue-700 to-indigo-700 px-4 py-2 text-sm font-medium text-white shadow-md shadow-blue-700/20 transition-all duration-200 hover:shadow-lg hover:shadow-blue-700/30"
                 >
                   Register
                 </Link>
@@ -64,9 +63,13 @@ export default function Header({ userRole, userName }: HeaderProps) {
             )}
 
             {portalLabel && !userRole && (
-              <span className="inline-flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-1.5 text-sm font-medium text-blue-700">
-                <span className="h-2 w-2 rounded-full bg-blue-600" />
+              <span className="chip border border-blue-200/80 bg-blue-50/80 text-blue-700">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-500 opacity-70" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-blue-600" />
+                </span>
                 <span className="hidden sm:inline">{portalLabel} · Demo</span>
+                <span className="sm:hidden">Demo</span>
               </span>
             )}
 
@@ -108,15 +111,11 @@ export default function Header({ userRole, userName }: HeaderProps) {
             )}
 
             {userRole && (
-              <div className="flex items-center gap-2 ml-2 pl-2 border-l border-gray-200">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  <span className="text-sm font-medium text-blue-700">
-                    {userName?.charAt(0) || 'U'}
-                  </span>
+              <div className="ml-2 flex items-center gap-2 border-l border-slate-200 pl-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-sm font-semibold text-white shadow-sm ring-2 ring-white">
+                  {userName?.charAt(0) || 'U'}
                 </div>
-                <span className="hidden sm:block text-sm text-gray-600">
-                  {userName}
-                </span>
+                <span className="hidden text-sm text-slate-600 sm:block">{userName}</span>
               </div>
             )}
           </nav>
@@ -140,10 +139,10 @@ function NavLink({
     <Link
       href={href}
       className={cn(
-        'px-3 py-2 text-sm font-medium rounded-lg transition-colors hidden sm:block',
+        'hidden rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 sm:block',
         isActive
-          ? 'bg-blue-50 text-blue-700'
-          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+          ? 'bg-blue-50 text-blue-700 shadow-[inset_0_-2px_0_0_var(--color-blue-600)]'
+          : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
       )}
     >
       {children}

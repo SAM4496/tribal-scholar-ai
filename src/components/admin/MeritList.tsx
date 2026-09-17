@@ -16,7 +16,7 @@ interface MeritListProps {
 }
 
 const DECISION_STYLES: Record<string, string> = {
-  PENDING: 'bg-gray-100 text-gray-600',
+  PENDING: 'bg-slate-100 text-slate-600',
   SELECTED: 'bg-emerald-100 text-emerald-700',
   REJECTED: 'bg-red-100 text-red-700',
 };
@@ -40,16 +40,16 @@ export default function MeritList({
   const allChecked = ranked.length > 0 && ranked.every((e) => selectedIds.includes(e.application.id));
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-5 border-b border-gray-100">
+    <div className="card">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-5 border-b border-slate-100">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Merit List</h2>
-          <p className="text-sm text-gray-500">Ranked by total score (highest first)</p>
+          <h2 className="section-title">Merit List</h2>
+          <p className="text-sm text-slate-500">Ranked by total score (highest first)</p>
         </div>
         <select
           value={scheme}
           onChange={(e) => setScheme(e.target.value)}
-          className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="input"
         >
           <option value="All">All Schemes</option>
           <option value="NFST">NFST</option>
@@ -60,7 +60,7 @@ export default function MeritList({
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100">
+            <tr className="border-b border-slate-100 bg-slate-50/70 text-left text-[0.7rem] font-semibold uppercase tracking-[0.09em] text-slate-500">
               <th className="px-4 py-3">
                 <input
                   type="checkbox"
@@ -81,6 +81,7 @@ export default function MeritList({
           <tbody>
             {ranked.map((entry, index) => {
               const total = totalScore(entry);
+              const max = maxTotal(entry.application.schemeCode);
               const breakdown = getCriteria(entry.application.schemeCode)
                 .map((criterion) => entry.scores[criterion.name] ?? 0)
                 .join(' + ');
@@ -88,7 +89,7 @@ export default function MeritList({
                 <tr
                   key={entry.application.id}
                   className={cn(
-                    'border-b border-gray-50 last:border-0 cursor-pointer hover:bg-gray-50',
+                    'border-b border-slate-100 last:border-0 cursor-pointer hover:bg-slate-50',
                     selectedIds.includes(entry.application.id) && 'bg-blue-50/50'
                   )}
                   onClick={() => onSelectEntry(entry.application.id)}
@@ -101,24 +102,49 @@ export default function MeritList({
                       aria-label={`Select ${entry.application.applicationNumber}`}
                     />
                   </td>
-                  <td className="px-3 py-3 font-semibold text-gray-700">{index + 1}</td>
-                  <td className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                  <td className="px-3 py-3">
+                    <span
+                      className={cn(
+                        'flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold',
+                        index === 0
+                          ? 'bg-gradient-to-br from-amber-400 to-yellow-600 text-white shadow-sm'
+                          : index === 1
+                            ? 'bg-gradient-to-br from-slate-300 to-slate-500 text-white shadow-sm'
+                            : index === 2
+                              ? 'bg-gradient-to-br from-orange-400 to-amber-700 text-white shadow-sm'
+                              : 'bg-slate-100 text-slate-600'
+                      )}
+                    >
+                      {index + 1}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 font-medium text-slate-900 whitespace-nowrap">
                     {entry.application.applicationNumber}
                   </td>
                   <td className="px-4 py-3">
-                    <p className="text-gray-900 whitespace-nowrap">{entry.application.applicant.name}</p>
-                    <p className="text-xs text-gray-400">{entry.application.applicant.state}</p>
+                    <p className="text-slate-900 whitespace-nowrap">{entry.application.applicant.name}</p>
+                    <p className="text-xs text-slate-400">{entry.application.applicant.state}</p>
                   </td>
                   <td className="px-3 py-3">
-                    <span className="inline-block bg-gray-100 text-gray-700 text-xs font-medium px-2 py-0.5 rounded">
+                    <span className="inline-block bg-slate-100 text-slate-700 text-xs font-medium px-2 py-0.5 rounded">
                       {entry.application.schemeCode}
                     </span>
                   </td>
                   <td className="px-3 py-3">
-                    <span className="font-bold text-gray-900">{total}</span>
-                    <span className="text-gray-400"> / {maxTotal(entry.application.schemeCode)}</span>
+                    <div className="w-24">
+                      <div className="flex items-baseline gap-1">
+                        <span className="font-display font-bold tabular-nums text-slate-900">{total}</span>
+                        <span className="text-xs text-slate-400">/ {max}</span>
+                      </div>
+                      <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-slate-100">
+                        <div
+                          className="h-full rounded-full bg-gradient-to-r from-blue-500 to-indigo-600"
+                          style={{ width: `${max > 0 ? Math.round((total / max) * 100) : 0}%` }}
+                        />
+                      </div>
+                    </div>
                   </td>
-                  <td className="px-4 py-3 text-xs text-gray-500 whitespace-nowrap">{breakdown}</td>
+                  <td className="px-4 py-3 text-xs text-slate-500 whitespace-nowrap">{breakdown}</td>
                   <td className="px-4 py-3">
                     <span
                       className={cn(
@@ -134,7 +160,7 @@ export default function MeritList({
             })}
             {ranked.length === 0 && (
               <tr>
-                <td colSpan={8} className="px-5 py-10 text-center text-gray-500">
+                <td colSpan={8} className="px-5 py-10 text-center text-slate-500">
                   No applications in the screening pool.
                 </td>
               </tr>
@@ -143,10 +169,11 @@ export default function MeritList({
         </table>
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-5 py-4 border-t border-gray-100">
-        <p className="text-xs text-gray-500">
-          {selectedIds.length} selected for batch action ·{' '}
-          <Link href="/admin/applications" className="text-blue-700 hover:underline">
+      <div className="flex flex-col gap-3 border-t border-slate-100 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-xs text-slate-500">
+          <span className="font-semibold text-slate-700">{selectedIds.length}</span> selected for
+          batch action ·{' '}
+          <Link href="/admin/applications" className="font-medium text-blue-700 hover:underline">
             open application review
           </Link>
         </p>
@@ -155,7 +182,7 @@ export default function MeritList({
             type="button"
             onClick={onBulkSelect}
             disabled={selectedIds.length === 0}
-            className="px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-emerald-600/20 transition-all hover:shadow-lg hover:shadow-emerald-600/30 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Select
           </button>
@@ -163,7 +190,7 @@ export default function MeritList({
             type="button"
             onClick={onBulkReject}
             disabled={selectedIds.length === 0}
-            className="px-4 py-2 text-sm font-medium text-red-700 border border-red-300 rounded-lg hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-semibold text-red-700 transition-all hover:border-red-300 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Reject
           </button>

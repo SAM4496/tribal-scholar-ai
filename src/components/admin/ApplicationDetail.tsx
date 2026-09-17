@@ -109,16 +109,20 @@ export default function ApplicationDetail({ detail }: ApplicationDetailProps) {
 
   return (
     <div>
-      <Link href="/admin/applications" className="text-sm text-blue-700 hover:underline">
-        ← Back to Applications
+      <Link
+        href="/admin/applications"
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition-colors hover:text-blue-700"
+      >
+        <span aria-hidden="true">←</span> Back to Applications
       </Link>
 
       {/* Header */}
-      <div className="bg-white border border-gray-200 rounded-xl p-5 mt-3">
+      <div className="card relative mt-3 overflow-hidden p-5">
+        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-700 via-indigo-600 to-transparent" />
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-2xl font-bold text-gray-900">{detail.applicationNumber}</h1>
+              <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">{detail.applicationNumber}</h1>
               <span
                 className={cn(
                   'inline-block text-xs font-medium px-2.5 py-1 rounded-full',
@@ -128,10 +132,10 @@ export default function ApplicationDetail({ detail }: ApplicationDetailProps) {
                 {formatStatus(status)}
               </span>
             </div>
-            <p className="text-gray-600 mt-1">
+            <p className="text-slate-600 mt-1">
               {detail.applicant.name} · {detail.schemeCode} — {detail.schemeName}
             </p>
-            <p className="text-sm text-gray-400 mt-0.5">
+            <p className="text-sm text-slate-400 mt-0.5">
               Stage: {detail.currentStage}
               {detail.submittedAt && ` · Submitted ${formatDate(detail.submittedAt)}`}
             </p>
@@ -147,12 +151,12 @@ export default function ApplicationDetail({ detail }: ApplicationDetailProps) {
                   type="button"
                   onClick={() => setActiveTransition(transition)}
                   className={cn(
-                    'px-4 py-2 text-sm font-medium rounded-lg border transition-colors',
+                    'rounded-lg border px-4 py-2 text-sm font-semibold transition-all',
                     isDanger
-                      ? 'border-red-300 text-red-700 hover:bg-red-50'
+                      ? 'border-red-200 bg-white text-red-700 hover:border-red-300 hover:bg-red-50'
                       : isDeficiency
-                        ? 'border-orange-300 text-orange-700 hover:bg-orange-50'
-                        : 'border-transparent text-white bg-blue-700 hover:bg-blue-800'
+                        ? 'border-orange-200 bg-white text-orange-700 hover:border-orange-300 hover:bg-orange-50'
+                        : 'border-transparent bg-gradient-to-r from-blue-700 to-indigo-700 text-white shadow-md shadow-blue-700/20 hover:shadow-lg hover:shadow-blue-700/30'
                   )}
                 >
                   {transition.label}
@@ -160,7 +164,7 @@ export default function ApplicationDetail({ detail }: ApplicationDetailProps) {
               );
             })}
             {transitions.length === 0 && (
-              <span className="text-sm text-gray-400 self-center">No manual actions for this status</span>
+              <span className="text-sm text-slate-400 self-center">No manual actions for this status</span>
             )}
           </div>
         </div>
@@ -182,29 +186,29 @@ export default function ApplicationDetail({ detail }: ApplicationDetailProps) {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
         <div className="lg:col-span-2 space-y-4">
-          <div className="bg-white border border-gray-200 rounded-xl p-5">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Applicant Information</h2>
+          <div className="card p-5">
+            <h2 className="section-title mb-4">Applicant Information</h2>
             <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
               {applicantRows.map((row) => (
-                <div key={row.label} className="flex justify-between gap-3 text-sm border-b border-gray-50 pb-2">
-                  <dt className="text-gray-500">{row.label}</dt>
-                  <dd className="text-gray-900 text-right">{row.value}</dd>
+                <div key={row.label} className="flex justify-between gap-3 text-sm border-b border-slate-100 pb-2">
+                  <dt className="text-slate-500">{row.label}</dt>
+                  <dd className="text-slate-900 text-right">{row.value}</dd>
                 </div>
               ))}
             </dl>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl p-5">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Scheme-Specific Details</h2>
+          <div className="card p-5">
+            <h2 className="section-title mb-4">Scheme-Specific Details</h2>
             <div className="space-y-5">
               {fieldSections.map(([section, fields]) => (
                 <div key={section}>
-                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">{section}</h3>
+                  <h3 className="eyebrow mb-2">{section}</h3>
                   <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
                     {fields.map((field) => (
                       <div key={field.fieldCode} className="flex justify-between gap-3 text-sm">
-                        <dt className="text-gray-500">{field.label}</dt>
-                        <dd className="text-gray-900 text-right">{field.value}</dd>
+                        <dt className="text-slate-500">{field.label}</dt>
+                        <dd className="text-slate-900 text-right">{field.value}</dd>
                       </div>
                     ))}
                   </dl>
@@ -225,21 +229,27 @@ export default function ApplicationDetail({ detail }: ApplicationDetailProps) {
           <DocumentReview documents={detail.documents} />
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-xl p-5">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Status History</h2>
-          <ol className="relative border-l border-gray-200 ml-2 space-y-4">
-            {history.map((entry, index) => (
-              <li key={`${entry.toStatus}-${index}`} className="ml-4">
-                <span className="absolute -left-1.5 mt-1.5 w-3 h-3 rounded-full bg-blue-600 border-2 border-white" />
-                <p className="text-sm font-medium text-gray-900">{formatStatus(entry.toStatus)}</p>
-                <p className="text-xs text-gray-500">
-                  {entry.changedByName} · {formatDateTime(entry.changedAt)}
-                </p>
-                {entry.remarks && <p className="text-xs text-gray-400 mt-0.5">{entry.remarks}</p>}
-              </li>
-            ))}
-          </ol>
-        </div>
+          <div className="card p-5">
+            <h2 className="section-title mb-4">Status History</h2>
+            <ol className="relative ml-2 space-y-5 border-l border-slate-200">
+              {history.map((entry, index) => (
+                <li key={`${entry.toStatus}-${index}`} className="relative ml-4">
+                  <span className="absolute -left-[1.4rem] top-1 h-3 w-3 rounded-full bg-gradient-to-br from-blue-600 to-indigo-700 ring-4 ring-white" />
+                  <p className="text-sm font-semibold text-slate-900">
+                    {formatStatus(entry.toStatus)}
+                  </p>
+                  <p className="mt-0.5 text-xs text-slate-500">
+                    {entry.changedByName} · {formatDateTime(entry.changedAt)}
+                  </p>
+                  {entry.remarks && (
+                    <p className="mt-1 rounded-lg bg-slate-50 px-2.5 py-1.5 text-xs text-slate-500">
+                      {entry.remarks}
+                    </p>
+                  )}
+                </li>
+              ))}
+            </ol>
+          </div>
       </div>
 
       {activeTransition && (

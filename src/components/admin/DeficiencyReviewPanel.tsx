@@ -24,20 +24,20 @@ export default function DeficiencyReviewPanel({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 animate-fade-in"
       onClick={onClose}
       role="presentation"
     >
       <div
-        className="w-full max-w-lg bg-white rounded-xl shadow-xl max-h-[90vh] overflow-y-auto"
+        className="w-full max-w-lg bg-white rounded-xl shadow-xl max-h-[90vh] overflow-y-auto animate-scale-in"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
       >
-        <div className="flex items-start justify-between p-5 border-b border-gray-100">
+        <div className="flex items-start justify-between p-5 border-b border-slate-100">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Deficiency Review</h2>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <h2 className="section-title">Deficiency Review</h2>
+            <p className="text-sm text-slate-500 mt-0.5">
               {record.applicationNumber} · {record.applicantName}
             </p>
           </div>
@@ -46,18 +46,18 @@ export default function DeficiencyReviewPanel({
 
         <div className="p-5 space-y-4">
           <div>
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+            <h3 className="eyebrow mb-1">
               Flagged Document
             </h3>
-            <p className="text-sm text-gray-900">{record.documentType.replace(/_/g, ' ')}</p>
+            <p className="text-sm text-slate-900">{record.documentType.replace(/_/g, ' ')}</p>
           </div>
 
           <div>
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+            <h3 className="eyebrow mb-1">
               Officer Description
             </h3>
-            <p className="text-sm text-gray-700">{record.description}</p>
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-sm text-slate-700">{record.description}</p>
+            <p className="text-xs text-slate-400 mt-1">
               {record.createdByName} · {formatDateTime(record.createdAt)}
             </p>
           </div>
@@ -67,36 +67,36 @@ export default function DeficiencyReviewPanel({
               <h3 className="text-xs font-semibold text-blue-700 uppercase tracking-wider mb-1">
                 Applicant Response
               </h3>
-              <p className="text-sm text-gray-700">{record.responseText}</p>
+              <p className="text-sm text-slate-700">{record.responseText}</p>
               {record.responseDocumentName && (
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-slate-500 mt-1">
                   Replacement document:{' '}
-                  <span className="font-medium text-gray-700">{record.responseDocumentName}</span>
+                  <span className="font-medium text-slate-700">{record.responseDocumentName}</span>
                 </p>
               )}
               {record.respondedAt && (
-                <p className="text-xs text-gray-400 mt-1">Responded {formatDateTime(record.respondedAt)}</p>
+                <p className="text-xs text-slate-400 mt-1">Responded {formatDateTime(record.respondedAt)}</p>
               )}
             </div>
           ) : (
-            <div className="rounded-lg bg-gray-50 border border-gray-100 p-3 text-sm text-gray-500">
+            <div className="rounded-lg bg-slate-50 border border-slate-100 p-3 text-sm text-slate-500">
               Awaiting applicant response.
             </div>
           )}
 
           {record.resolvedAt && (
-            <div className="rounded-lg bg-gray-50 border border-gray-100 p-3">
-              <p className="text-xs text-gray-500">
+            <div className="rounded-lg bg-slate-50 border border-slate-100 p-3">
+              <p className="text-xs text-slate-500">
                 {record.status === 'RESOLVED' ? 'Resolved' : 'Rejected'} by {record.resolvedByName} ·{' '}
                 {formatDateTime(record.resolvedAt)}
               </p>
-              {record.remarks && <p className="text-sm text-gray-700 mt-1">{record.remarks}</p>}
+              {record.remarks && <p className="text-sm text-slate-700 mt-1">{record.remarks}</p>}
             </div>
           )}
 
           {canAct && (
             <div>
-              <label htmlFor="review-remarks" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="review-remarks" className="block text-sm font-medium text-slate-700 mb-1">
                 {requiresRemarks ? 'Remarks' : 'Reason for rejection (optional)'}
               </label>
               <textarea
@@ -105,17 +105,17 @@ export default function DeficiencyReviewPanel({
                 onChange={(e) => setRemarks(e.target.value)}
                 rows={2}
                 placeholder="Add a note for the audit trail…"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input"
               />
             </div>
           )}
         </div>
 
-        <div className="flex justify-end gap-3 p-5 border-t border-gray-100">
+        <div className="flex justify-end gap-3 p-5 border-t border-slate-100">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50"
           >
             Close
           </button>

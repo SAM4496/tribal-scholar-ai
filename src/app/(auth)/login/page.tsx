@@ -3,27 +3,41 @@
 import Link from 'next/link';
 import { useState } from 'react';
 
+const DEMO_ACCOUNTS = [
+  { role: 'Applicant', email: 'applicant@demo.com' },
+  { role: 'Admin', email: 'admin@demo.com' },
+  { role: 'Scrutiny', email: 'scrutiny@demo.com' },
+];
+
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-blue-900 rounded-xl flex items-center justify-center mx-auto mb-4">
-            <span className="text-white font-bold text-2xl">TS</span>
+    <div className="relative flex min-h-[85vh] items-center justify-center overflow-hidden px-4 py-16">
+      <div className="pointer-events-none absolute inset-0 grid-lines opacity-40" />
+      <div className="pointer-events-none absolute -left-32 top-0 h-[26rem] w-[26rem] rounded-full bg-blue-400/20 blur-[130px]" />
+      <div className="pointer-events-none absolute -right-32 bottom-0 h-[26rem] w-[26rem] rounded-full bg-indigo-400/20 blur-[130px]" />
+
+      <div className="relative w-full max-w-md animate-fade-in-up">
+        <div className="mb-8 text-center">
+          <div className="sheen-parent mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-800 to-indigo-700 shadow-xl shadow-blue-900/25 ring-1 ring-inset ring-white/20">
+            <span className="font-display text-2xl font-extrabold tracking-tight text-white">
+              TS
+            </span>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Login to Tribal Scholar AI</h1>
-          <p className="text-gray-500 mt-1">Scholarship & Fellowship Management System</p>
+          <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">
+            Welcome back
+          </h1>
+          <p className="mt-1.5 text-sm text-slate-500">
+            Login to the Scholarship &amp; Fellowship Management System
+          </p>
         </div>
 
-        {/* Form */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+        <div className="card p-6 sm:p-7">
           <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="email" className="eyebrow mb-1.5 block">
                 Email Address
               </label>
               <input
@@ -31,13 +45,13 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="input"
                 placeholder="Enter your email"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="password" className="eyebrow mb-1.5 block">
                 Password
               </label>
               <input
@@ -45,36 +59,41 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="input"
                 placeholder="Enter your password"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full py-2.5 bg-blue-700 text-white font-medium rounded-lg hover:bg-blue-800 transition-colors"
+              className="mt-2 w-full rounded-xl bg-gradient-to-r from-blue-700 to-indigo-700 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-700/25 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-700/35"
             >
               Login
             </button>
           </form>
 
-          <p className="text-center text-sm text-gray-500 mt-4">
+          <p className="mt-5 text-center text-sm text-slate-500">
             Don&apos;t have an account?{' '}
-            <Link href="/register" className="text-blue-700 font-medium hover:text-blue-800">
+            <Link href="/register" className="font-semibold text-blue-700 hover:text-blue-800">
               Register
             </Link>
           </p>
         </div>
 
-        {/* Demo accounts */}
-        <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <p className="text-xs font-medium text-yellow-800 mb-2">
-            ⚠️ Hackathon Prototype — Demo Accounts
-          </p>
-          <div className="text-xs text-yellow-700 space-y-1">
-            <p><strong>Applicant:</strong> applicant@demo.com / demo1234</p>
-            <p><strong>Admin:</strong> admin@demo.com / demo1234</p>
-            <p><strong>Scrutiny:</strong> scrutiny@demo.com / demo1234</p>
+        <div className="mt-5 rounded-2xl border border-amber-200/70 bg-gradient-to-br from-amber-50 to-white p-4">
+          <p className="eyebrow text-amber-700">Hackathon Prototype — Demo Accounts</p>
+          <div className="mt-3 space-y-2">
+            {DEMO_ACCOUNTS.map((account) => (
+              <div
+                key={account.email}
+                className="flex items-center justify-between gap-3 rounded-lg bg-white/70 px-3 py-2 text-xs"
+              >
+                <span className="font-medium text-slate-700">{account.role}</span>
+                <span className="font-mono text-slate-500">
+                  {account.email} / demo1234
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </div>

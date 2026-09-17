@@ -75,21 +75,29 @@ export default function DeficienciesPage() {
       />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white border border-gray-200 border-l-4 border-l-orange-500 rounded-xl p-4">
-          <p className="text-sm text-gray-500">Open</p>
-          <p className="text-2xl font-bold text-orange-600 mt-1">{counts.OPEN}</p>
+        <div className="card card-hover relative overflow-hidden border-l-4 border-l-orange-500 p-4">
+          <p className="eyebrow">Open</p>
+          <p className="mt-2 font-display text-[1.75rem] font-bold leading-none tabular-nums text-orange-600">
+            {counts.OPEN}
+          </p>
         </div>
-        <div className="bg-white border border-gray-200 border-l-4 border-l-blue-500 rounded-xl p-4">
-          <p className="text-sm text-gray-500">Responded</p>
-          <p className="text-2xl font-bold text-blue-600 mt-1">{counts.RESPONDED}</p>
+        <div className="card card-hover relative overflow-hidden border-l-4 border-l-blue-500 p-4">
+          <p className="eyebrow">Responded</p>
+          <p className="mt-2 font-display text-[1.75rem] font-bold leading-none tabular-nums text-blue-600">
+            {counts.RESPONDED}
+          </p>
         </div>
-        <div className="bg-white border border-gray-200 border-l-4 border-l-green-500 rounded-xl p-4">
-          <p className="text-sm text-gray-500">Resolved</p>
-          <p className="text-2xl font-bold text-green-600 mt-1">{counts.RESOLVED}</p>
+        <div className="card card-hover relative overflow-hidden border-l-4 border-l-emerald-500 p-4">
+          <p className="eyebrow">Resolved</p>
+          <p className="mt-2 font-display text-[1.75rem] font-bold leading-none tabular-nums text-emerald-600">
+            {counts.RESOLVED}
+          </p>
         </div>
-        <div className="bg-white border border-gray-200 border-l-4 border-l-red-500 rounded-xl p-4">
-          <p className="text-sm text-gray-500">Rejected</p>
-          <p className="text-2xl font-bold text-red-600 mt-1">{counts.REJECTED}</p>
+        <div className="card card-hover relative overflow-hidden border-l-4 border-l-red-500 p-4">
+          <p className="eyebrow">Rejected</p>
+          <p className="mt-2 font-display text-[1.75rem] font-bold leading-none tabular-nums text-red-600">
+            {counts.REJECTED}
+          </p>
         </div>
       </div>
 

@@ -10,7 +10,7 @@ export default function SelectionSummary({ entries }: SelectionSummaryProps) {
   const pending = entries.filter((e) => e.decision === 'PENDING').length;
 
   const cards = [
-    { label: 'In Screening Pool', value: entries.length, accent: 'border-l-blue-600', color: 'text-gray-900' },
+    { label: 'In Screening Pool', value: entries.length, accent: 'border-l-blue-600', color: 'text-slate-900' },
     { label: 'Selected', value: selected, accent: 'border-l-emerald-500', color: 'text-emerald-600' },
     { label: 'Rejected', value: rejected, accent: 'border-l-red-500', color: 'text-red-600' },
     { label: 'Pending Decision', value: pending, accent: 'border-l-amber-500', color: 'text-amber-600' },
@@ -31,9 +31,9 @@ export default function SelectionSummary({ entries }: SelectionSummaryProps) {
         {cards.map((card) => (
           <div
             key={card.label}
-            className={`bg-white border border-gray-200 border-l-4 ${card.accent} rounded-xl p-5`}
+            className={`card card-hover border-l-4 ${card.accent} p-5`}
           >
-            <p className="text-sm text-gray-500">{card.label}</p>
+            <p className="text-sm text-slate-500">{card.label}</p>
             <p className={`text-3xl font-bold mt-1 ${card.color}`}>{card.value}</p>
           </div>
         ))}
@@ -41,16 +41,16 @@ export default function SelectionSummary({ entries }: SelectionSummaryProps) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
         {schemes.map((scheme) => (
-          <div key={scheme.code} className="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between">
+          <div key={scheme.code} className="card p-4 flex items-center justify-between">
             <div>
               <span className="inline-block bg-blue-50 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded">
                 {scheme.code}
               </span>
-              <p className="text-sm text-gray-500 mt-1">In pool: {scheme.total}</p>
+              <p className="text-sm text-slate-500 mt-1">In pool: {scheme.total}</p>
             </div>
             <div className="text-right">
-              <p className="text-2xl font-bold text-emerald-600">{scheme.selected}</p>
-              <p className="text-xs text-gray-500">selected</p>
+              <p className="font-display text-2xl font-bold tabular-nums text-emerald-600">{scheme.selected}</p>
+              <p className="text-xs text-slate-500">selected</p>
             </div>
           </div>
         ))}

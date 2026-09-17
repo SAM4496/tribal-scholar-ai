@@ -10,20 +10,30 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 py-8">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-blue-900 rounded-xl flex items-center justify-center mx-auto mb-4">
-            <span className="text-white font-bold text-2xl">TS</span>
+    <div className="relative flex min-h-[85vh] items-center justify-center overflow-hidden px-4 py-16">
+      <div className="pointer-events-none absolute inset-0 grid-lines opacity-40" />
+      <div className="pointer-events-none absolute -left-32 top-0 h-[26rem] w-[26rem] rounded-full bg-blue-400/20 blur-[130px]" />
+      <div className="pointer-events-none absolute -right-32 bottom-0 h-[26rem] w-[26rem] rounded-full bg-emerald-400/15 blur-[130px]" />
+
+      <div className="relative w-full max-w-md animate-fade-in-up">
+        <div className="mb-8 text-center">
+          <div className="sheen-parent mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-800 to-indigo-700 shadow-xl shadow-blue-900/25 ring-1 ring-inset ring-white/20">
+            <span className="font-display text-2xl font-extrabold tracking-tight text-white">
+              TS
+            </span>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Create Your Account</h1>
-          <p className="text-gray-500 mt-1">Register to apply for scholarships</p>
+          <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">
+            Create your account
+          </h1>
+          <p className="mt-1.5 text-sm text-slate-500">
+            Register to apply for scholarships and fellowships
+          </p>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+        <div className="card p-6 sm:p-7">
           <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="name" className="eyebrow mb-1.5 block">
                 Full Name
               </label>
               <input
@@ -31,13 +41,13 @@ export default function RegisterPage() {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="input"
                 placeholder="Enter your full name"
               />
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="email" className="eyebrow mb-1.5 block">
                 Email Address
               </label>
               <input
@@ -45,13 +55,13 @@ export default function RegisterPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="input"
                 placeholder="Enter your email"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="password" className="eyebrow mb-1.5 block">
                 Password
               </label>
               <input
@@ -59,13 +69,13 @@ export default function RegisterPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="input"
                 placeholder="Create a password (min 8 characters)"
               />
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="confirmPassword" className="eyebrow mb-1.5 block">
                 Confirm Password
               </label>
               <input
@@ -73,29 +83,29 @@ export default function RegisterPage() {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="input"
                 placeholder="Confirm your password"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full py-2.5 bg-blue-700 text-white font-medium rounded-lg hover:bg-blue-800 transition-colors"
+              className="mt-2 w-full rounded-xl bg-gradient-to-r from-blue-700 to-indigo-700 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-700/25 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-700/35"
             >
               Register
             </button>
           </form>
 
-          <p className="text-center text-sm text-gray-500 mt-4">
+          <p className="mt-5 text-center text-sm text-slate-500">
             Already have an account?{' '}
-            <Link href="/login" className="text-blue-700 font-medium hover:text-blue-800">
+            <Link href="/login" className="font-semibold text-blue-700 hover:text-blue-800">
               Login
             </Link>
           </p>
         </div>
 
-        <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-          <p className="text-xs text-center text-yellow-800">
+        <div className="mt-5 rounded-2xl border border-amber-200/70 bg-gradient-to-br from-amber-50 to-white p-3.5">
+          <p className="text-center text-xs text-amber-800">
             ⚠️ Hackathon Prototype — This is not an official government portal.
           </p>
         </div>

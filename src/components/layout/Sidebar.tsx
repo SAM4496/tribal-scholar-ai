@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { type NavItem } from '@/types';
+import NavIcon from './NavIcon';
 
 interface SidebarProps {
   items: NavItem[];
@@ -17,52 +18,70 @@ export default function Sidebar({ items, title }: SidebarProps) {
 
   return (
     <>
-      <div className="lg:hidden bg-white border-b border-gray-200">
+      <div className="sticky top-[4.1rem] z-40 border-b border-slate-200/70 glass lg:hidden">
         <nav className="flex gap-2 overflow-x-auto px-4 py-3" aria-label={title}>
-          {items.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                'flex items-center gap-1.5 whitespace-nowrap px-3 py-1.5 text-sm font-medium rounded-full border transition-colors',
-                isActive(item.href)
-                  ? 'bg-blue-700 text-white border-blue-700'
-                  : 'text-gray-600 border-gray-200 hover:bg-gray-50 hover:text-gray-900'
-              )}
-            >
-              {item.label}
-              {item.badge !== undefined && item.badge > 0 && (
-                <span className="bg-red-500 text-white text-xs font-medium px-1.5 py-0.5 rounded-full">
-                  {item.badge}
-                </span>
-              )}
-            </Link>
-          ))}
+          {items.map((item) => {
+            const active = isActive(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  'flex items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1.5 text-sm font-medium transition-all duration-200 active:scale-95',
+                  active
+                    ? 'border-transparent bg-gradient-to-r from-blue-700 to-indigo-700 text-white shadow-md shadow-blue-600/25'
+                    : 'border-slate-200 bg-white/70 text-slate-600 hover:border-slate-300 hover:bg-white hover:text-slate-900'
+                )}
+              >
+                <NavIcon href={item.href} className="h-4 w-4" />
+                {item.label}
+                {item.badge !== undefined && item.badge > 0 && (
+                  <span className="rounded-full bg-red-500 px-1.5 py-0.5 text-xs font-semibold text-white">
+                    {item.badge}
+                  </span>
+                )}
+              </Link>
+            );
+          })}
         </nav>
       </div>
 
-      <aside className="hidden lg:block w-64 shrink-0 bg-white border-r border-gray-200 sticky top-[4.25rem] self-start max-h-[calc(100vh-4.25rem)] overflow-y-auto">
-        <div className="p-4">
-          <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
-            {title}
-          </h2>
-          <nav className="space-y-1">
-            {items.map((item) => {
+      <aside className="sticky top-[4.1rem] hidden max-h-[calc(100vh-4.1rem)] w-72 shrink-0 self-start overflow-y-auto border-r border-slate-200/70 bg-white/70 backdrop-blur-xl lg:block">
+        <div className="p-5">
+          <p className="eyebrow mb-4 px-1">{title}</p>
+          <nav className="space-y-1.5">
+            {items.map((item, index) => {
               const active = isActive(item.href);
               return (
                 <Link
                   key={item.href}
                   href={item.href}
+                  style={{ animationDelay: `${index * 40}ms` }}
                   className={cn(
-                    'flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-r-lg border-l-4 transition-colors',
+                    'animate-slide-in-right group relative flex items-center gap-3 rounded-xl px-2.5 py-2.5 text-sm font-medium transition-all duration-200',
                     active
-                      ? 'bg-blue-50 text-blue-700 border-blue-700 font-semibold'
-                      : 'text-gray-600 border-transparent hover:text-gray-900 hover:bg-gray-50'
+                      ? 'bg-gradient-to-r from-blue-700 to-indigo-700 text-white shadow-lg shadow-blue-700/25'
+                      : 'text-slate-600 hover:bg-slate-100/90 hover:text-slate-900'
                   )}
                 >
-                  <span>{item.label}</span>
+                  <span
+                    className={cn(
+                      'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-all duration-200',
+                      active
+                        ? 'bg-white/15 text-white'
+                        : 'bg-slate-100 text-slate-500 group-hover:bg-white group-hover:text-blue-700 group-hover:shadow-sm'
+                    )}
+                  >
+                    <NavIcon href={item.href} className="h-[1.05rem] w-[1.05rem]" />
+                  </span>
+                  <span className="flex-1 truncate">{item.label}</span>
                   {item.badge !== undefined && item.badge > 0 && (
-                    <span className="bg-red-500 text-white text-xs font-medium px-2 py-0.5 rounded-full">
+                    <span
+                      className={cn(
+                        'rounded-full px-2 py-0.5 text-xs font-semibold',
+                        active ? 'bg-white/20 text-white' : 'bg-red-500 text-white'
+                      )}
+                    >
                       {item.badge}
                     </span>
                   )}
@@ -70,6 +89,13 @@ export default function Sidebar({ items, title }: SidebarProps) {
               );
             })}
           </nav>
+
+          <div className="mt-6 rounded-xl border border-slate-200/80 bg-gradient-to-br from-slate-50 to-white p-4">
+            <p className="text-xs font-semibold text-slate-700">Hackathon Prototype</p>
+            <p className="mt-1 text-xs leading-relaxed text-slate-500">
+              Running on demo data. Live APIs will replace the mock layer at integration time.
+            </p>
+          </div>
         </div>
       </aside>
     </>

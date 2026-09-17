@@ -46,16 +46,16 @@ export default function DeficiencyList({ deficiencies, onReview }: DeficiencyLis
   );
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-5 border-b border-gray-100">
+    <div className="card">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-5 border-b border-slate-100">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Deficiencies</h2>
-          <p className="text-sm text-gray-500">Track and resolve flagged issues across applications</p>
+          <h2 className="section-title">Deficiencies</h2>
+          <p className="text-sm text-slate-500">Track and resolve flagged issues across applications</p>
         </div>
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value)}
-          className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="input"
         >
           <option value="All">All Statuses</option>
           {(['OPEN', 'RESPONDED', 'RESOLVED', 'REJECTED'] as MockDeficiencyStatus[]).map((option) => (
@@ -69,7 +69,7 @@ export default function DeficiencyList({ deficiencies, onReview }: DeficiencyLis
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100">
+            <tr className="border-b border-slate-100 bg-slate-50/70 text-left text-[0.7rem] font-semibold uppercase tracking-[0.09em] text-slate-500">
               <th className="px-5 py-3">Application #</th>
               <th className="px-5 py-3">Applicant</th>
               <th className="px-5 py-3">Document</th>
@@ -81,23 +81,23 @@ export default function DeficiencyList({ deficiencies, onReview }: DeficiencyLis
           </thead>
           <tbody>
             {filtered.map((record) => (
-              <tr key={record.id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50">
-                <td className="px-5 py-3 font-medium text-gray-900 whitespace-nowrap">
+              <tr key={record.id} className="border-b border-slate-100 last:border-0 hover:bg-slate-50">
+                <td className="px-5 py-3 font-medium text-slate-900 whitespace-nowrap">
                   <Link href={`/admin/applications/${record.applicationId}`} className="hover:underline">
                     {record.applicationNumber}
                   </Link>
                 </td>
-                <td className="px-5 py-3 text-gray-900 whitespace-nowrap">{record.applicantName}</td>
-                <td className="px-5 py-3 text-gray-600 whitespace-nowrap">
+                <td className="px-5 py-3 text-slate-900 whitespace-nowrap">{record.applicantName}</td>
+                <td className="px-5 py-3 text-slate-600 whitespace-nowrap">
                   {record.documentType.replace(/_/g, ' ')}
                 </td>
-                <td className="px-5 py-3 text-gray-600 max-w-xs">
+                <td className="px-5 py-3 text-slate-600 max-w-xs">
                   <span className="line-clamp-2">{record.description}</span>
                 </td>
                 <td className="px-5 py-3">
                   <DeficiencyStatusBadge status={record.status} />
                 </td>
-                <td className="px-5 py-3 text-gray-500 whitespace-nowrap">{formatDate(record.createdAt)}</td>
+                <td className="px-5 py-3 text-slate-500 whitespace-nowrap">{formatDate(record.createdAt)}</td>
                 <td className="px-5 py-3 text-right">
                   <button
                     type="button"
@@ -111,7 +111,7 @@ export default function DeficiencyList({ deficiencies, onReview }: DeficiencyLis
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-5 py-10 text-center text-gray-500">
+                <td colSpan={7} className="px-5 py-10 text-center text-slate-500">
                   No deficiencies match this filter.
                 </td>
               </tr>
