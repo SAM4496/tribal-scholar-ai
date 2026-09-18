@@ -77,7 +77,7 @@ export default function ApplicationCard({
       </p>
 
       <div className="mt-5">
-        <StatusStepper status={application.status} />
+        <StatusStepper status={application.status} showLabels={false} />
         <div className="mt-3">
           <div className="flex items-center justify-between gap-3 text-xs">
             <span

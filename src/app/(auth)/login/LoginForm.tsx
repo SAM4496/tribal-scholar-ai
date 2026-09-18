@@ -55,10 +55,22 @@ export default function LoginForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials),
       });
-      const data: LoginPayload = await res.json();
 
-      if (!res.ok || !data.user || !data.home) {
-        setError(data.error?.message ?? 'Unable to sign in. Please try again.');
+      let data: LoginPayload = { success: false };
+      try {
+        data = (await res.json()) as LoginPayload;
+      } catch {
+        data = {
+          success: false,
+          error: {
+            code: 'BAD_RESPONSE',
+            message: 'Server error. Please try again in a moment.',
+          },
+        };
+      }
+
+      if (!res.ok || !data?.user || !data?.home) {
+        setError(data?.error?.message ?? 'Unable to sign in. Please try again.');
         return;
       }
 

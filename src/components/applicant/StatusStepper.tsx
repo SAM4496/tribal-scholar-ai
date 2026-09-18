@@ -35,8 +35,8 @@ export default function StatusStepper({
           const isLast = index === steps.length - 1;
 
           return (
-            <div key={step} className={cn('flex items-center', !isLast && 'flex-1')}>
-              <div className="flex flex-col items-center gap-1.5">
+            <div key={step} className={cn('flex min-w-0 items-center', !isLast && 'flex-1')}>
+              <div className="flex min-w-0 flex-col items-center gap-1.5">
                 <span
                   className={cn(
                     'flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[0.625rem] font-semibold transition-all duration-300',
@@ -68,7 +68,7 @@ export default function StatusStepper({
                 {showLabels && (
                   <span
                     className={cn(
-                      'hidden text-center text-[0.65rem] font-medium leading-tight tracking-wide sm:block',
+                      'max-w-[5.5rem] truncate text-center text-[0.65rem] font-medium leading-tight tracking-wide sm:block',
                       active ? 'text-blue-700' : done ? 'text-slate-500' : 'text-slate-400'
                     )}
                   >

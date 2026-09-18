@@ -43,6 +43,24 @@ function clearFailures(ip: string): void {
 }
 
 export async function POST(request: NextRequest): Promise<Response> {
+  try {
+    return await handleLogin(request);
+  } catch (error) {
+    console.error('[auth/login] unexpected error:', error);
+    return Response.json(
+      {
+        success: false,
+        error: {
+          code: 'SERVER_ERROR',
+          message: 'Sign-in service is temporarily unavailable. Please try again shortly.',
+        },
+      },
+      { status: 500 }
+    );
+  }
+}
+
+async function handleLogin(request: NextRequest): Promise<Response> {
   if (!isSameOrigin(request)) {
     return Response.json(
       { success: false, error: { code: 'CSRF', message: 'Invalid request origin.' } },
