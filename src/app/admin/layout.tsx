@@ -1,10 +1,23 @@
+import { redirect } from 'next/navigation';
 import Sidebar, { adminNavItems } from '@/components/layout/Sidebar';
+import { readSession } from '@/lib/session';
+import { isAdminPortalRole, roleHome } from '@/lib/session-crypto';
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await readSession();
+
+  if (!session) {
+    redirect('/login');
+  }
+
+  if (!isAdminPortalRole(session.role)) {
+    redirect(roleHome(session.role));
+  }
+
   return (
     <div className="flex flex-col lg:flex-row">
       <Sidebar items={adminNavItems} title="Admin Portal" />

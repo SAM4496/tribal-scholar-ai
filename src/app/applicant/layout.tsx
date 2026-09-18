@@ -1,10 +1,23 @@
+import { redirect } from 'next/navigation';
 import Sidebar, { applicantNavItems } from '@/components/layout/Sidebar';
+import { readSession } from '@/lib/session';
+import { APPLICANT_ROLE, roleHome } from '@/lib/session-crypto';
 
-export default function ApplicantLayout({
+export default async function ApplicantLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await readSession();
+
+  if (!session) {
+    redirect('/login');
+  }
+
+  if (session.role !== APPLICANT_ROLE) {
+    redirect(roleHome(session.role));
+  }
+
   return (
     <div className="flex flex-col lg:flex-row">
       <Sidebar items={applicantNavItems} title="Applicant Portal" />

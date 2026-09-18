@@ -4,6 +4,7 @@ import './globals.css';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import Preloader from '@/components/landing/Preloader';
+import { readSession } from '@/lib/session';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -30,11 +31,16 @@ export const metadata: Metadata = {
     'AI-enabled Scholarship and Fellowship Management System for the Ministry of Tribal Affairs. Hackathon Prototype.',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await readSession();
+  const user = session
+    ? { name: session.name, role: session.role, email: session.email }
+    : null;
+
   return (
     <html
       lang="en"
@@ -43,7 +49,7 @@ export default function RootLayout({
     >
       <body className="min-h-screen flex flex-col antialiased">
         <Preloader />
-        <Header />
+        <Header user={user} />
         <main className="flex-1">{children}</main>
         <Footer />
       </body>

@@ -1,16 +1,23 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { LogoMark } from '@/components/layout/Logo';
-import { cn } from '@/lib/utils';
+import { cn, getInitials } from '@/lib/utils';
+import { isAdminPortalRole } from '@/lib/session-crypto';
 
-interface HeaderProps {
-  userRole?: 'APPLICANT' | 'ADMIN' | null;
-  userName?: string;
+interface HeaderUser {
+  name: string;
+  role: string;
+  email?: string;
 }
 
-export default function Header({ userRole, userName }: HeaderProps) {
+interface HeaderProps {
+  user?: HeaderUser | null;
+}
+
+export default function Header({ user }: HeaderProps) {
   const pathname = usePathname();
   const portalLabel = pathname.startsWith('/admin')
     ? 'Admin Portal'
@@ -18,13 +25,16 @@ export default function Header({ userRole, userName }: HeaderProps) {
       ? 'Applicant Portal'
       : null;
 
+  const isAdmin = !!user && isAdminPortalRole(user.role);
+  const isApplicant = !!user && user.role === 'APPLICANT';
+
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200/70 glass shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
       <div className="h-1 bg-gradient-to-r from-orange-500 via-slate-200 to-emerald-600" />
 
       <div className="mx-auto max-w-[90rem] px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          <Link href="/" className="group flex items-center gap-3">
+          <Link href={isApplicant ? '/applicant/dashboard' : isAdmin ? '/admin/dashboard' : '/'} className="group flex items-center gap-3">
             <div className="relative transition-transform duration-300 group-hover:scale-[1.05] group-hover:rotate-[-3deg]">
               <span className="absolute -inset-1.5 rounded-2xl bg-indigo-500/20 opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-100" />
               <LogoMark size={40} className="relative" />
@@ -40,7 +50,7 @@ export default function Header({ userRole, userName }: HeaderProps) {
           </Link>
 
           <nav className="flex items-center gap-1 sm:gap-2">
-            {!userRole && !portalLabel && (
+            {!user && !portalLabel && (
               <>
                 <Link
                   href="/login"
@@ -62,18 +72,18 @@ export default function Header({ userRole, userName }: HeaderProps) {
               </>
             )}
 
-            {portalLabel && !userRole && (
+            {portalLabel && !user && (
               <span className="chip border border-blue-200/80 bg-blue-50/80 text-blue-700">
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-500 opacity-70" />
                   <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-blue-600" />
                 </span>
-                <span className="hidden sm:inline">{portalLabel} · Demo</span>
-                <span className="sm:hidden">Demo</span>
+                <span className="hidden sm:inline">{portalLabel}</span>
+                <span className="sm:hidden">Portal</span>
               </span>
             )}
 
-            {userRole === 'APPLICANT' && (
+            {isApplicant && (
               <>
                 <NavLink href="/applicant/dashboard" current={pathname}>
                   Dashboard
@@ -90,7 +100,7 @@ export default function Header({ userRole, userName }: HeaderProps) {
               </>
             )}
 
-            {userRole === 'ADMIN' && (
+            {isAdmin && (
               <>
                 <NavLink href="/admin/dashboard" current={pathname}>
                   Dashboard
@@ -110,18 +120,67 @@ export default function Header({ userRole, userName }: HeaderProps) {
               </>
             )}
 
-            {userRole && (
-              <div className="ml-2 flex items-center gap-2 border-l border-slate-200 pl-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-sm font-semibold text-white shadow-sm ring-2 ring-white">
-                  {userName?.charAt(0) || 'U'}
+            {user && (
+              <div className="ml-1 flex items-center gap-2 border-l border-slate-200 pl-3 sm:ml-2 sm:pl-2">
+                <div
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-sm font-semibold text-white shadow-sm ring-2 ring-white"
+                  title={user.name}
+                >
+                  {getInitials(user.name)}
                 </div>
-                <span className="hidden text-sm text-slate-600 sm:block">{userName}</span>
+                <div className="hidden leading-tight md:block">
+                  <p className="max-w-[10rem] truncate text-sm font-medium text-slate-800">
+                    {user.name}
+                  </p>
+                  <p className="text-[0.65rem] font-medium uppercase tracking-wide text-slate-400">
+                    {user.role.replace(/_/g, ' ')}
+                  </p>
+                </div>
+                <LogoutButton />
               </div>
             )}
           </nav>
         </div>
       </div>
     </header>
+  );
+}
+
+function LogoutButton() {
+  const router = useRouter();
+  const [pending, setPending] = useState(false);
+
+  async function handleLogout() {
+    setPending(true);
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      router.push('/login');
+      router.refresh();
+    } finally {
+      setPending(false);
+    }
+  }
+
+  return (
+    <button
+      onClick={handleLogout}
+      disabled={pending}
+      className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600 transition-all duration-200 hover:border-red-200 hover:bg-red-50 hover:text-red-700 disabled:opacity-50"
+      title="Sign out"
+    >
+      <svg
+        className="h-3.5 w-3.5"
+        viewBox="0 0 16 16"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M10 3h3v10h-3M6.5 8h6M9 5.5 11.5 8 9 10.5" />
+      </svg>
+      <span className="hidden sm:inline">{pending ? 'Signing out…' : 'Sign out'}</span>
+    </button>
   );
 }
 
